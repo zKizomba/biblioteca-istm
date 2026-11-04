@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Biblioteca ISTM</title>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#18314b"/>
+  <path d="M14 19c7-3 13-2 18 2v27c-5-4-11-5-18-2V19Zm36 0c-7-3-13-2-18 2v27c5-4 11-5 18-2V19Z" fill="none" stroke="#f1c66d" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M20 26c3-.7 6-.3 9 1M20 33c3-.7 6-.3 9 1m6-7c3-1.3 6-1.7 9-1m-9 8c3-1.3 6-1.7 9-1" fill="none" stroke="#f7f3e8" stroke-width="2" stroke-linecap="round"/>
+</svg>

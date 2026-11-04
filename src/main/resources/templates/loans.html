@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Empréstimos | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}"></head>
+<body><div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('loans')}"></div>
+    <main class="main-area"><div th:replace="~{fragments :: topbar('Empréstimos')}"></div>
+        <section class="page-content"><div th:replace="~{fragments :: flashMessages}"></div>
+            <div class="page-intro"><div><p class="eyebrow">CIRCULAÇÃO</p><h2>Empréstimos e devoluções</h2><p class="muted">O sistema calcula o prazo e alerta quando um empréstimo fica vencido.</p></div><span class="count-pill" th:text="${#lists.size(loans)} + ' registos'">0 registos</span></div>
+            <section class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">NOVA OPERAÇÃO</p><h3>Registar empréstimo</h3></div></div>
+                <form class="form-grid loan-form" th:action="@{/emprestimos}" method="post">
+                    <label>Exemplar<select name="bookCode" required><option value="">Seleccionar exemplar disponível</option><option th:each="book : ${availableBooks}" th:value="${book.code}" th:text="|${book.code} · ${book.title}|">Código · Título</option></select></label>
+                    <label>Leitor<select name="readerId" required><option value="">Seleccionar leitor</option><option th:each="reader : ${readers}" th:value="${reader.id}" th:text="|${reader.name} · ${reader.id}${#lists.contains(blockedReaderIds, reader.id) ? ' — BLOQUEADO' : ''}|" th:disabled="${#lists.contains(blockedReaderIds, reader.id)}">Nome · ID</option></select></label>
+                    <div class="form-action"><button class="button primary" type="submit" th:disabled="${#lists.isEmpty(availableBooks) or #lists.isEmpty(readers)}">＋ Registar empréstimo</button></div>
+                </form>
+                <p class="form-hint">Prazo definido para esta demonstração: <b th:text="${loanDurationDays} + ' dias'">14 dias</b>. Leitores com atraso por resolver ou suspensão activa não podem requisitar.</p>
+            </section>
+            <section class="panel list-panel"><div class="panel-heading"><div><p class="eyebrow">HISTÓRICO</p><h3>Circulação do acervo</h3></div></div>
+                <div th:if="${#lists.isEmpty(loans)}" class="empty-state compact"><div class="empty-icon">↔</div><h4>Nenhum empréstimo registado</h4><p>Os empréstimos aparecerão aqui.</p></div>
+                <div th:unless="${#lists.isEmpty(loans)}" class="table-wrap"><table><thead><tr><th>REFERÊNCIA</th><th>EXEMPLAR</th><th>LEITOR</th><th>EMPRÉSTIMO</th><th>PRAZO</th><th>SITUAÇÃO</th><th>ACÇÃO</th></tr></thead><tbody>
+                    <tr th:each="notice : ${loanNotices}"><td class="code-cell" th:text="${#strings.substring(notice.loan.id, 0, 8)}">7f2a10bc</td><td th:text="${notice.loan.bookCode}">B-001</td><td th:text="|${notice.readerName} · ${notice.loan.readerId}|">Leitor</td><td th:text="${notice.loan.borrowedOn}">data</td><td th:text="${notice.loan.dueOn}">data</td>
+                        <td><span th:if="${notice.loan.active and notice.overdueDays > 0}" class="badge overdue" th:text="|Atrasado · ${notice.overdueDays} dia(s)|">Atrasado</span><span th:if="${notice.loan.active and notice.overdueDays == 0}" class="badge borrowed">Emprestado</span><span th:unless="${notice.loan.active}" class="badge available">Devolvido</span></td>
+                        <td><form th:if="${notice.loan.active}" th:action="@{/emprestimos/{id}/devolver(id=${notice.loan.id})}" method="post"><button class="button small secondary" type="submit">Registar devolução</button></form><span th:unless="${notice.loan.active}" class="muted" th:text="${notice.loan.returnedOn}">data</span></td></tr>
+                </tbody></table></div>
+            </section>
+        </section>
+    </main>
+</div></body></html>

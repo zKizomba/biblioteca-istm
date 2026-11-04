@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Leitores | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}"></head>
+<body><div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('readers')}"></div>
+    <main class="main-area">
+        <div th:replace="~{fragments :: topbar('Leitores')}"></div>
+        <section class="page-content">
+            <div th:replace="~{fragments :: flashMessages}"></div>
+            <div class="page-intro"><div><p class="eyebrow">UTILIZADORES</p><h2>Gestão de leitores</h2><p class="muted">Registe leitores para permitir empréstimos controlados.</p></div><span class="count-pill" th:text="${#lists.size(readers)} + ' leitores'">0 leitores</span></div>
+            <section class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">NOVO REGISTO</p><h3>Adicionar leitor</h3></div></div>
+                <form class="form-grid reader-form" th:action="@{/leitores}" method="post">
+                    <label>Identificador<input name="id" placeholder="Ex.: ALU-2026-001" required maxlength="40"></label>
+                    <label>Nome completo<input name="name" placeholder="Nome do leitor" required maxlength="120"></label>
+                    <label>Correio electrónico<input name="email" type="email" placeholder="nome@exemplo.ao" required maxlength="180"></label>
+                    <div class="form-action"><button class="button primary" type="submit">＋ Registar leitor</button></div>
+                </form>
+            </section>
+            <section class="panel list-panel"><div class="panel-heading"><div><p class="eyebrow">REGISTOS</p><h3>Todos os leitores</h3></div><form class="search-form" method="get" th:action="@{/leitores}"><input type="search" name="q" th:value="${searchQuery}" placeholder="Pesquisar por nome, código ou e-mail" aria-label="Pesquisar leitores"><button class="button small secondary" type="submit">Pesquisar</button><a th:if="${!#strings.isEmpty(searchQuery)}" class="clear-search" th:href="@{/leitores}">Limpar</a></form></div>
+                <div th:if="${#lists.isEmpty(readers)}" class="empty-state compact"><div class="empty-icon">♙</div><h4>Nenhum leitor registado</h4><p>Use o formulário acima para adicionar o primeiro.</p></div>
+                <div th:unless="${#lists.isEmpty(readers)}" class="table-wrap"><table><thead><tr><th>IDENTIFICADOR</th><th>NOME</th><th>CORREIO ELECTRÓNICO</th><th>SITUAÇÃO</th></tr></thead><tbody>
+                    <tr th:each="reader : ${readers}"><td class="code-cell" th:text="${reader.id}">ALU-001</td><td class="strong-cell" th:text="${reader.name}">Nome</td><td th:text="${reader.email}">nome@exemplo.ao</td><td><span class="badge" th:classappend="${#lists.contains(suspendedReaderIds, reader.id)} ? ' suspended' : ' available'" th:text="${#lists.contains(suspendedReaderIds, reader.id)} ? 'Suspenso' : 'Regular'">Regular</span></td></tr>
+                </tbody></table></div>
+            </section>
+        </section>
+    </main>
+</div></body></html>

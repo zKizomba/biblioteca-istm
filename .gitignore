@@ -1,0 +1,10 @@
+target/
+.maven-repository/
+tmp/
+*.class
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db

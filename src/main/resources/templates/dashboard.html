@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Painel | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}">
+</head>
+<body><div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('dashboard')}"></div>
+    <main class="main-area">
+        <div th:replace="~{fragments :: topbar('Painel geral')}"></div>
+        <section class="page-content">
+            <div th:replace="~{fragments :: flashMessages}"></div>
+            <div class="welcome-row">
+                <div><p class="eyebrow">VISÃO GERAL</p><h2>Bem-vindo à Biblioteca ISTM</h2><p class="muted">Acompanhe o acervo, a circulação e os prazos de devolução.</p></div>
+                <a class="button primary" th:href="@{/emprestimos}"><span aria-hidden="true">＋</span> Novo empréstimo</a>
+            </div>
+            <div class="stats-grid">
+                <article class="stat-card"><div class="stat-icon teal"><span aria-hidden="true">▤</span></div><div><p>Exemplares</p><strong th:text="${bookCount}">0</strong></div><a th:href="@{/livros}" aria-label="Ver acervo">›</a></article>
+                <article class="stat-card"><div class="stat-icon purple"><span aria-hidden="true">♙</span></div><div><p>Leitores registados</p><strong th:text="${readerCount}">0</strong></div><a th:href="@{/leitores}" aria-label="Ver leitores">›</a></article>
+                <article class="stat-card"><div class="stat-icon amber"><span aria-hidden="true">↔</span></div><div><p>Empréstimos activos</p><strong th:text="${activeLoanCount}">0</strong></div><a th:href="@{/emprestimos}" aria-label="Ver empréstimos">›</a></article>
+            </div>
+            <section class="alert-grid">
+                <article class="notice-card overdue-note"><span class="notice-icon">!</span><div><b th:text="${overdueCount} + ' empréstimo(s) em atraso'">0 empréstimos em atraso</b><p>Verifique os prazos e contacte os leitores.</p><a class="text-link" th:href="@{/suspensoes}">Ver alertas <span>→</span></a></div></article>
+                <article class="notice-card policy-note"><span class="notice-icon">✓</span><div><b>Política demonstrativa</b><p th:text="|Prazo: ${loanDurationDays} dias · Suspensão após atraso: ${suspensionDurationDays} dias|">Prazos configuráveis</p><a class="text-link" th:href="@{/suspensoes}">Ver medidas <span>→</span></a></div></article>
+            </section>
+            <section th:if="${!#lists.isEmpty(overdueLoans)}" class="panel overdue-panel">
+                <div class="panel-heading"><div><p class="eyebrow">ACÇÃO NECESSÁRIA</p><h3>Empréstimos vencidos</h3></div><a class="text-link" th:href="@{/suspensoes}">Acompanhar suspensões <span>→</span></a></div>
+                <div class="table-wrap"><table><thead><tr><th>LEITOR</th><th>EXEMPLAR</th><th>PRAZO</th><th>ATRASO</th></tr></thead><tbody>
+                    <tr th:each="notice : ${overdueLoans}"><td class="strong-cell" th:text="|${notice.readerName} · ${notice.loan.readerId}|">Leitor</td><td th:text="${notice.loan.bookCode}">Código</td><td th:text="${notice.loan.dueOn}">data</td><td><span class="badge overdue" th:text="|${notice.overdueDays} dia(s)|">1 dia</span></td></tr>
+                </tbody></table></div>
+            </section>
+            <section class="panel recent-panel">
+                <div class="panel-heading"><div><p class="eyebrow">CATÁLOGO</p><h3>Exemplares recentes</h3></div><a class="text-link" th:href="@{/livros}">Ver todo o acervo <span>→</span></a></div>
+                <div th:if="${#lists.isEmpty(recentBooks)}" class="empty-state"><div class="empty-icon">▤</div><h4>Ainda não há exemplares</h4><p>Registe o primeiro exemplar para começar o catálogo.</p><a class="button secondary" th:href="@{/livros}">Registar exemplar</a></div>
+                <div th:unless="${#lists.isEmpty(recentBooks)}" class="table-wrap"><table><thead><tr><th>CÓDIGO</th><th>TÍTULO</th><th>AUTOR</th><th>ESTADO</th></tr></thead>
+                    <tbody><tr th:each="book : ${recentBooks}"><td class="code-cell" th:text="${book.code}">B-001</td><td class="strong-cell" th:text="${book.title}">Título</td><td th:text="${book.author}">Autor</td><td><span class="badge" th:classappend="${book.available} ? ' available' : ' borrowed'" th:text="${book.available} ? 'Disponível' : 'Emprestado'">Disponível</span></td></tr></tbody>
+                </table></div>
+            </section>
+        </section>
+    </main>
+</div></body>
+</html>

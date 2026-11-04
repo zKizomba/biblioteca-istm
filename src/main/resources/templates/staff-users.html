@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Contas e privilégios | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}"></head>
+<body><div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('staff')}"></div>
+    <main class="main-area"><div th:replace="~{fragments :: topbar('Contas e privilégios')}"></div>
+        <section class="page-content"><div th:replace="~{fragments :: flashMessages}"></div>
+            <div class="page-intro"><div><p class="eyebrow">ADMINISTRAÇÃO</p><h2>Acesso da equipa</h2><p class="muted">Crie contas e atribua apenas os privilégios necessários a cada colaborador.</p></div><span class="count-pill" th:text="${#lists.size(staffUsers)} + ' contas'">0 contas</span></div>
+            <section class="notice-card security-note"><span class="notice-icon">✓</span><div><b>Controlo de acesso activo</b><p>Administradores gerem contas. Bibliotecários gerem acervo, leitores, empréstimos e suspensões.</p></div></section>
+            <section class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">NOVA CONTA</p><h3>Adicionar colaborador</h3></div></div>
+                <form class="form-grid account-form" th:action="@{/admin/utilizadores}" method="post">
+                    <label>Utilizador<input name="username" autocomplete="off" minlength="3" maxlength="40" pattern="[A-Za-z0-9._-]+" placeholder="Ex.: nome.apelido" required></label>
+                    <label>Palavra-passe temporária<input name="password" type="password" minlength="12" autocomplete="new-password" placeholder="Pelo menos 12 caracteres" required></label>
+                    <label>Perfil<select name="role" required><option value="BIBLIOTECARIO">Bibliotecário</option><option value="ADMIN">Administrador</option></select></label>
+                    <div class="form-action"><button class="button primary" type="submit">Criar conta</button></div>
+                </form>
+                <p class="form-hint">As contas desta versão demonstrativa ficam na memória e reiniciam com o sistema. Defina credenciais seguras no ambiente antes de qualquer instalação institucional.</p>
+            </section>
+            <section class="panel list-panel"><div class="panel-heading"><div><p class="eyebrow">CONTAS ACTIVAS</p><h3>Colaboradores autorizados</h3></div></div>
+                <div class="table-wrap"><table><thead><tr><th>UTILIZADOR</th><th>PERFIL ACTUAL</th><th>ALTERAR PRIVILÉGIO</th><th></th></tr></thead><tbody>
+                    <tr th:each="user : ${staffUsers}"><td class="strong-cell" th:text="${user.username}">utilizador</td><td><span class="badge" th:classappend="${user.role == 'ADMIN'} ? ' role-admin' : ' role-staff'" th:text="${user.role == 'ADMIN'} ? 'Administrador' : 'Bibliotecário'">Bibliotecário</span></td>
+                        <td colspan="2"><form class="inline-form" th:action="@{/admin/utilizadores/{username}/perfil(username=${user.username})}" method="post"><select name="role" aria-label="Novo perfil"><option value="BIBLIOTECARIO" th:selected="${user.role == 'BIBLIOTECARIO'}">Bibliotecário</option><option value="ADMIN" th:selected="${user.role == 'ADMIN'}">Administrador</option></select><button class="button small secondary" type="submit">Actualizar perfil</button></form></td></tr>
+                </tbody></table></div>
+            </section>
+        </section>
+    </main>
+</div></body></html>

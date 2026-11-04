@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Iniciar sessão | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}">
+</head>
+<body class="login-page">
+<main class="login-card">
+    <img class="login-logo" th:src="@{/images/istm-library-mark.svg}" alt="Biblioteca ISTM" width="64" height="64">
+    <p class="eyebrow">INSTITUTO SUPERIOR TÉCNICO MILITAR</p>
+    <h1>Biblioteca ISTM</h1>
+    <p class="muted login-intro">Entre com a sua conta institucional para gerir o acervo e a circulação.</p>
+    <div th:if="${param.error}" class="flash error" role="alert">Utilizador ou palavra-passe incorrectos.</div>
+    <div th:if="${param.logout}" class="flash success" role="status">Sessão terminada com segurança.</div>
+    <form th:action="@{/login}" method="post" class="login-form">
+        <label for="username">Utilizador</label><input id="username" name="username" autocomplete="username" required autofocus>
+        <label for="password">Palavra-passe</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button class="button primary login-submit" type="submit">Iniciar sessão <span aria-hidden="true">→</span></button>
+    </form>
+    <p class="login-foot">Acesso reservado aos colaboradores autorizados da biblioteca.</p>
+</main>
+</body>
+</html>

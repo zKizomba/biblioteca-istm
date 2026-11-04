@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Atrasos e suspensões | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}"></head>
+<body><div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('suspensions')}"></div>
+    <main class="main-area"><div th:replace="~{fragments :: topbar('Atrasos e suspensões')}"></div>
+        <section class="page-content"><div th:replace="~{fragments :: flashMessages}"></div>
+            <div class="page-intro"><div><p class="eyebrow">ACOMPANHAMENTO</p><h2>Prazos e medidas</h2><p class="muted">O sistema alerta sobre empréstimos vencidos e regista suspensões temporárias após a devolução em atraso.</p></div></div>
+            <div class="stats-grid"><article class="stat-card"><div class="stat-icon red">!</div><div><p>Empréstimos em atraso</p><strong th:text="${overdueCount}">0</strong></div></article><article class="stat-card"><div class="stat-icon amber">⌛</div><div><p>Suspensões activas</p><strong th:text="${activeSuspensionCount}">0</strong></div></article></div>
+            <section class="notice-card policy-note"><span class="notice-icon">i</span><div><b>Regra aplicada nesta versão</b><p>Não há cobrança de multa em dinheiro. Ao devolver depois do prazo, o leitor recebe uma suspensão temporária configurável. A instituição deve validar os dias antes do uso real.</p></div></section>
+            <section class="panel list-panel"><div class="panel-heading"><div><p class="eyebrow">HISTÓRICO</p><h3>Suspensões aplicadas</h3></div></div>
+                <div th:if="${#lists.isEmpty(suspensions)}" class="empty-state compact"><div class="empty-icon">✓</div><h4>Sem suspensões registadas</h4><p>As medidas aplicadas por atraso serão listadas aqui.</p></div>
+                <div th:unless="${#lists.isEmpty(suspensions)}" class="table-wrap"><table><thead><tr><th>LEITOR</th><th>EMPRÉSTIMO</th><th>INÍCIO</th><th>FIM</th><th>SITUAÇÃO</th></tr></thead><tbody>
+                    <tr th:each="notice : ${suspensions}"><td class="strong-cell" th:text="|${notice.readerName} · ${notice.suspension.readerId}|">Leitor</td><td class="code-cell" th:text="${#strings.substring(notice.suspension.loanId,0,8)}">código</td><td th:text="${notice.suspension.startsOn}">data</td><td th:text="${notice.suspension.endsOn}">data</td><td><span class="badge" th:classappend="${notice.active} ? ' suspended' : ' available'" th:text="${notice.active} ? 'Suspenso' : 'Concluída'">Situação</span></td></tr>
+                </tbody></table></div>
+            </section>
+        </section>
+    </main>
+</div></body></html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Exemplares | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}"></head>
+<body><div class="app-shell">
+    <div th:replace="~{fragments :: sidebar('books')}"></div>
+    <main class="main-area">
+        <div th:replace="~{fragments :: topbar('Exemplares')}"></div>
+        <section class="page-content">
+            <div th:replace="~{fragments :: flashMessages}"></div>
+            <div class="page-intro"><div><p class="eyebrow">CATÁLOGO</p><h2>Gestão de exemplares</h2><p class="muted">Cada código interno representa uma cópia física da biblioteca.</p></div><span class="count-pill" th:text="${#lists.size(books)} + ' exemplares'">0 exemplares</span></div>
+            <section class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">NOVO REGISTO</p><h3>Adicionar exemplar</h3></div></div>
+                <form class="form-grid" th:action="@{/livros}" method="post">
+                    <label>Código interno<input name="code" placeholder="Ex.: ISTM-0001" required maxlength="40"></label>
+                    <label>Título<input name="title" placeholder="Título do livro" required maxlength="160"></label>
+                    <label>Autor<input name="author" placeholder="Nome do autor" required maxlength="120"></label>
+                    <div class="form-action"><button class="button primary" type="submit">＋ Registar exemplar</button></div>
+                </form>
+            </section>
+            <section class="panel list-panel"><div class="panel-heading"><div><p class="eyebrow">ACERVO</p><h3>Todos os exemplares</h3></div><form class="search-form" method="get" th:action="@{/livros}"><input type="search" name="q" th:value="${searchQuery}" placeholder="Pesquisar por código, título ou autor" aria-label="Pesquisar exemplares"><button class="button small secondary" type="submit">Pesquisar</button><a th:if="${!#strings.isEmpty(searchQuery)}" class="clear-search" th:href="@{/livros}">Limpar</a></form></div>
+                <div th:if="${#lists.isEmpty(books)}" class="empty-state compact"><div class="empty-icon">▤</div><h4>Nenhum exemplar registado</h4><p>Use o formulário acima para adicionar o primeiro.</p></div>
+                <div th:unless="${#lists.isEmpty(books)}" class="table-wrap"><table><thead><tr><th>CÓDIGO</th><th>TÍTULO</th><th>AUTOR</th><th>DISPONIBILIDADE</th></tr></thead><tbody>
+                    <tr th:each="book : ${books}"><td class="code-cell" th:text="${book.code}">B-001</td><td class="strong-cell" th:text="${book.title}">Título</td><td th:text="${book.author}">Autor</td><td><span class="badge" th:classappend="${book.available} ? ' available' : ' borrowed'" th:text="${book.available} ? 'Disponível' : 'Emprestado'">Disponível</span></td></tr>
+                </tbody></table></div>
+            </section>
+        </section>
+    </main>
+</div></body></html>
