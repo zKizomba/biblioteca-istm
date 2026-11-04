@@ -6,12 +6,18 @@ public class Book {
     private final String code;
     private final String title;
     private final String author;
+    private final String category;
     private boolean available = true;
 
     public Book(String code, String title, String author) {
+        this(code, title, author, "Geral");
+    }
+
+    public Book(String code, String title, String author, String category) {
         this.code = required(code, "Código do exemplar");
         this.title = required(title, "Título");
         this.author = required(author, "Autor");
+        this.category = required(category, "Categoria");
     }
 
     private static String required(String value, String field) {
@@ -22,6 +28,7 @@ public class Book {
     public String getCode() { return code; }
     public String getTitle() { return title; }
     public String getAuthor() { return author; }
+    public String getCategory() { return category; }
     public boolean isAvailable() { return available; }
     public void markBorrowed() {
         if (!available) throw new IllegalStateException("O livro já está emprestado.");

@@ -12,6 +12,7 @@ import ao.istm.biblioteca.repository.ReaderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LibraryServiceTest {
@@ -29,6 +30,31 @@ class LibraryServiceTest {
         Loan loan = library.borrowBook("9780000000001", "L001", LocalDate.of(2026, 11, 4));
         assertTrue(loan.isActive());
         assertFalse(library.findBook("9780000000001").isAvailable());
+    }
+
+    @Test
+    void shouldRegisterMultiplePhysicalCopiesWithIndividualCodesAndCategory() {
+        var copies = library.registerBookStock("ISTM-ENG-01", "Fundamentos de Engenharia", "Autor Exemplo", "Engenharia", 3);
+
+        assertEquals(3, copies.size());
+        assertEquals(List.of("ISTM-ENG-01-001", "ISTM-ENG-01-002", "ISTM-ENG-01-003"),
+                copies.stream().map(Book::getCode).toList());
+        assertTrue(copies.stream().allMatch(book -> book.getCategory().equals("Engenharia")));
+        assertEquals(4, library.listBooks().size());
+
+        library.borrowBook("ISTM-ENG-01-001", "L001", LocalDate.of(2026, 11, 4));
+        assertFalse(library.findBook("ISTM-ENG-01-001").isAvailable());
+        assertTrue(library.findBook("ISTM-ENG-01-002").isAvailable());
+    }
+
+    @Test
+    void shouldRejectStockRegistrationWhenAnyGeneratedCopyCodeAlreadyExists() {
+        library.registerBook("ISTM-ENG-02-002", "Existing copy", "Author");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                library.registerBookStock("ISTM-ENG-02", "New title", "Author", "Engineering", 3));
+        assertTrue(library.listBooks().stream().noneMatch(book -> book.getCode().equals("ISTM-ENG-02-001")));
+        assertTrue(library.listBooks().stream().noneMatch(book -> book.getCode().equals("ISTM-ENG-02-003")));
     }
 
     @Test

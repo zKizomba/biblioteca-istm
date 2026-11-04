@@ -144,6 +144,8 @@ Microserviços poderiam escalar componentes de forma independente, mas acrescent
 | RF10 | Alertar bibliotecário sobre empréstimos em atraso e suspensões activas | Implementado |
 | RF11 | Autenticar colaboradores e separar privilégios de administrador e bibliotecário | Implementado |
 | RF12 | Pesquisar exemplares e leitores | Implementado |
+| RF13 | Registar quantidade de copias fisicas por titulo, gerando um codigo individual por exemplar | Implementado |
+| RF14 | Classificar exemplares por especialidade/categoria e pesquisar por essa classificacao | Implementado |
 
 ## Requisitos não funcionais
 

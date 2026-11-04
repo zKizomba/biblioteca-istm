@@ -41,7 +41,7 @@ class LibraryWebControllerTest {
     @Test
     void shouldRenderAllMainPages() throws Exception {
         mvc.perform(get("/")).andExpect(status().isOk()).andExpect(content().string(containsString("Bem-vindo à Biblioteca ISTM")));
-        mvc.perform(get("/livros")).andExpect(status().isOk()).andExpect(content().string(containsString("Gestão de exemplares")));
+        mvc.perform(get("/livros")).andExpect(status().isOk()).andExpect(content().string(containsString("Gestão do acervo")));
         mvc.perform(get("/leitores")).andExpect(status().isOk()).andExpect(content().string(containsString("Gestão de leitores")));
         mvc.perform(get("/emprestimos")).andExpect(status().isOk()).andExpect(content().string(containsString("Empréstimos e devoluções")));
         mvc.perform(get("/suspensoes")).andExpect(status().isOk()).andExpect(content().string(containsString("Atrasos e suspensões")));
@@ -50,12 +50,13 @@ class LibraryWebControllerTest {
     @Test
     void shouldRegisterSearchAndRejectDuplicateBook() throws Exception {
         String code = "WEB-B-" + UUID.randomUUID();
-        mvc.perform(post("/livros").with(csrf()).param("code", code).param("title", "Livro Web").param("author", "Autora Web"))
+        mvc.perform(post("/livros").with(csrf()).param("code", code).param("title", "Livro Web").param("author", "Autora Web").param("category", "Engenharia").param("quantity", "2"))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/livros"));
         mvc.perform(get("/livros").param("q", "Livro Web")).andExpect(status().isOk()).andExpect(content().string(containsString("Livro Web")));
-        mvc.perform(post("/livros").with(csrf()).param("code", code).param("title", "Duplicado").param("author", "Autora Web"))
+        mvc.perform(get("/livros").param("q", "Engenharia")).andExpect(status().isOk()).andExpect(content().string(containsString("-002")));
+        mvc.perform(post("/livros").with(csrf()).param("code", code).param("title", "Duplicado").param("author", "Autora Web").param("category", "Engenharia").param("quantity", "1"))
                 .andExpect(status().is3xxRedirection());
-        mvc.perform(post("/livros").with(csrf()).param("code", " ").param("title", "Inválido").param("author", "Autor"))
+        mvc.perform(post("/livros").with(csrf()).param("code", " ").param("title", "Inválido").param("author", "Autor").param("category", "Geral").param("quantity", "1"))
                 .andExpect(status().is3xxRedirection());
     }
 

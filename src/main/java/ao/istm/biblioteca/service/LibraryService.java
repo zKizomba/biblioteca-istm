@@ -37,6 +37,19 @@ public class LibraryService {
     public Book registerBook(String code, String title, String author) {
         Book book = new Book(code, title, author); books.save(book); return book;
     }
+    public synchronized List<Book> registerBookStock(String codePrefix, String title, String author,
+                                                       String category, int quantity) {
+        if (quantity < 1 || quantity > 1000) throw new IllegalArgumentException("A quantidade deve estar entre 1 e 1000 exemplares.");
+        if (codePrefix == null || codePrefix.isBlank()) throw new IllegalArgumentException("O prefixo dos cÃ³digos Ã© obrigatÃ³rio.");
+        String prefix = codePrefix.trim();
+        List<Book> copies = java.util.stream.IntStream.rangeClosed(1, quantity)
+                .mapToObj(number -> new Book(prefix + "-%03d".formatted(number), title, author, category)).toList();
+        for (Book copy : copies) {
+            if (books.findByCode(copy.getCode()).isPresent()) throw new IllegalArgumentException("JÃ¡ existe um exemplar com o cÃ³digo " + copy.getCode() + ".");
+        }
+        copies.forEach(books::save);
+        return copies;
+    }
     public Reader registerReader(String id, String name, String email) {
         Reader reader = new Reader(id, name, email); readers.save(reader); return reader;
     }

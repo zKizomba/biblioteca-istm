@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt" xmlns:th="http://www.thymeleaf.org">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Exemplares | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Acervo | Biblioteca ISTM</title><link rel="stylesheet" th:href="@{/css/library.css}"></head>
 <body><div class="app-shell">
     <div th:replace="~{fragments :: sidebar('books')}"></div>
     <main class="main-area">
-        <div th:replace="~{fragments :: topbar('Exemplares')}"></div>
+        <div th:replace="~{fragments :: topbar('Acervo físico')}"></div>
         <section class="page-content">
             <div th:replace="~{fragments :: flashMessages}"></div>
-            <div class="page-intro"><div><p class="eyebrow">CATÁLOGO</p><h2>Gestão de exemplares</h2><p class="muted">Cada código interno representa uma cópia física da biblioteca.</p></div><span class="count-pill" th:text="${#lists.size(books)} + ' exemplares'">0 exemplares</span></div>
-            <section class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">NOVO REGISTO</p><h3>Adicionar exemplar</h3></div></div>
-                <form class="form-grid" th:action="@{/livros}" method="post">
-                    <label>Código interno<input name="code" placeholder="Ex.: ISTM-0001" required maxlength="40"></label>
+            <div class="page-intro"><div><p class="eyebrow">CATÁLOGO FÍSICO</p><h2>Gestão do acervo</h2><p class="muted">Registe um título e a quantidade de cópias físicas. Cada cópia recebe um código próprio para empréstimos e devoluções.</p></div><span class="count-pill" th:text="${totalCopies} + ' exemplares · ' + ${availableCopies} + ' disponíveis'">0 exemplares</span></div>
+            <section class="panel form-panel"><div class="panel-heading"><div><p class="eyebrow">NOVO TÍTULO</p><h3>Adicionar livros ao acervo</h3></div></div>
+                <form class="form-grid stock-form" th:action="@{/livros}" method="post">
+                    <label>Prefixo dos códigos<input name="code" placeholder="Ex.: ISTM-ENG-01" required maxlength="32"><small>Será acrescentado um número a cada exemplar.</small></label>
                     <label>Título<input name="title" placeholder="Título do livro" required maxlength="160"></label>
-                    <label>Autor<input name="author" placeholder="Nome do autor" required maxlength="120"></label>
-                    <div class="form-action"><button class="button primary" type="submit">＋ Registar exemplar</button></div>
+                    <label>Autor(es)<input name="author" placeholder="Nome do autor" required maxlength="120"></label>
+                    <label>Especialidade / categoria<input name="category" placeholder="Ex.: Engenharia" required maxlength="80"></label>
+                    <label>Quantidade de cópias<input name="quantity" type="number" min="1" max="1000" value="1" required></label>
+                    <div class="form-action"><button class="button primary" type="submit">＋ Registar acervo</button></div>
                 </form>
+                <p class="form-hint">Exemplo: prefixo ISTM-ENG-01 e quantidade 3 cria ISTM-ENG-01-001, -002 e -003. Cada exemplar pode ser emprestado separadamente.</p>
             </section>
-            <section class="panel list-panel"><div class="panel-heading"><div><p class="eyebrow">ACERVO</p><h3>Todos os exemplares</h3></div><form class="search-form" method="get" th:action="@{/livros}"><input type="search" name="q" th:value="${searchQuery}" placeholder="Pesquisar por código, título ou autor" aria-label="Pesquisar exemplares"><button class="button small secondary" type="submit">Pesquisar</button><a th:if="${!#strings.isEmpty(searchQuery)}" class="clear-search" th:href="@{/livros}">Limpar</a></form></div>
-                <div th:if="${#lists.isEmpty(books)}" class="empty-state compact"><div class="empty-icon">▤</div><h4>Nenhum exemplar registado</h4><p>Use o formulário acima para adicionar o primeiro.</p></div>
-                <div th:unless="${#lists.isEmpty(books)}" class="table-wrap"><table><thead><tr><th>CÓDIGO</th><th>TÍTULO</th><th>AUTOR</th><th>DISPONIBILIDADE</th></tr></thead><tbody>
-                    <tr th:each="book : ${books}"><td class="code-cell" th:text="${book.code}">B-001</td><td class="strong-cell" th:text="${book.title}">Título</td><td th:text="${book.author}">Autor</td><td><span class="badge" th:classappend="${book.available} ? ' available' : ' borrowed'" th:text="${book.available} ? 'Disponível' : 'Emprestado'">Disponível</span></td></tr>
+            <section class="panel list-panel"><div class="panel-heading"><div><p class="eyebrow">INVENTÁRIO</p><h3>Exemplares físicos registados</h3></div><form class="search-form" method="get" th:action="@{/livros}"><input type="search" name="q" th:value="${searchQuery}" placeholder="Pesquisar código, título, autor ou categoria" aria-label="Pesquisar exemplares"><button class="button small secondary" type="submit">Pesquisar</button><a th:if="${!#strings.isEmpty(searchQuery)}" class="clear-search" th:href="@{/livros}">Limpar</a></form></div>
+                <div th:if="${#lists.isEmpty(books)}" class="empty-state compact"><div class="empty-icon">▤</div><h4>Nenhum exemplar registado</h4><p>Use o formulário acima para adicionar livros físicos.</p></div>
+                <div th:unless="${#lists.isEmpty(books)}" class="table-wrap"><table><thead><tr><th>CÓDIGO DO EXEMPLAR</th><th>TÍTULO</th><th>AUTOR</th><th>ESPECIALIDADE / CATEGORIA</th><th>ESTADO</th></tr></thead><tbody>
+                    <tr th:each="book : ${books}"><td class="code-cell" th:text="${book.code}">ISTM-ENG-01-001</td><td class="strong-cell" th:text="${book.title}">Título</td><td th:text="${book.author}">Autor</td><td th:text="${book.category}">Engenharia</td><td><span class="badge" th:classappend="${book.available} ? ' available' : ' borrowed'" th:text="${book.available} ? 'Disponível' : 'Emprestado'">Disponível</span></td></tr>
                 </tbody></table></div>
             </section>
         </section>

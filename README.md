@@ -28,6 +28,10 @@ Esta versão usa valores de demonstração para permitir experiências locais: p
 
 Não há pagamento nem cobrança monetária. Um livro devolvido depois do prazo gera uma sanção temporária de suspensão; enquanto existir atraso por resolver ou suspensão activa, o leitor não pode iniciar outro empréstimo. O painel apresenta alertas de atraso.
 
+## Inventario de livros fisicos
+
+No ecra do acervo, registe titulo, autor, especialidade/categoria, prefixo de codigo e quantidade. O sistema cria um registo individual por copia fisica (por exemplo, `ISTM-ENG-01-001`, `ISTM-ENG-01-002` e `ISTM-ENG-01-003`). Cada exemplar tem disponibilidade independente e pode ser emprestado separadamente. A pesquisa inclui codigo, titulo, autor e categoria. O logotipo oficial fornecido esta em `src/main/resources/static/images/istm-official-logo.png`.
+
 ## Perfis e acesso
 
 - **Administrador:** gere contas e atribui os perfis Administrador e Bibliotecário.
@@ -53,7 +57,7 @@ O comando compila, executa testes automatizados, gera o relatório JaCoCo e falh
 - `src/main/resources/templates`: páginas Thymeleaf
 - `src/main/resources/static`: CSS e marca gráfica da Biblioteca ISTM
 
-A marca gráfica actual é uma identidade própria do projecto, não o brasão oficial da instituição. A interface usa uma paleta académica de azul-marinho e dourado e ícones SVG locais. Os templates e estilos podem ser ajustados sem alterar as regras de negócio.
+A interface utiliza o logotipo oficial fornecido para este projecto, uma paleta academica de azul-marinho e dourado e icones SVG locais. Os templates e estilos podem ser ajustados sem alterar as regras de negocio.
 
 ## Próximas etapas
 

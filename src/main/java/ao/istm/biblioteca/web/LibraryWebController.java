@@ -107,17 +107,22 @@ public class LibraryWebController {
         model.addAttribute("books", library.listBooks().stream().filter(book -> search.isEmpty()
                 || book.getCode().toLowerCase(java.util.Locale.ROOT).contains(search)
                 || book.getTitle().toLowerCase(java.util.Locale.ROOT).contains(search)
-                || book.getAuthor().toLowerCase(java.util.Locale.ROOT).contains(search)).toList());
+                || book.getAuthor().toLowerCase(java.util.Locale.ROOT).contains(search)
+                || book.getCategory().toLowerCase(java.util.Locale.ROOT).contains(search)).toList());
         model.addAttribute("searchQuery", query);
+        model.addAttribute("totalCopies", library.listBooks().size());
+        model.addAttribute("availableCopies", library.listBooks().stream().filter(Book::isAvailable).count());
         return "books";
     }
 
     @PostMapping("/livros")
     public String registerBook(@RequestParam("code") String code, @RequestParam("title") String title,
-                               @RequestParam("author") String author, RedirectAttributes redirect) {
+                               @RequestParam("author") String author, @RequestParam("category") String category,
+                               @RequestParam("quantity") int quantity, RedirectAttributes redirect) {
         try {
-            library.registerBook(code, title, author);
-            redirect.addFlashAttribute("success", "Exemplar registado com sucesso.");
+            var copies = library.registerBookStock(code, title, author, category, quantity);
+            redirect.addFlashAttribute("success", copies.size() + " exemplar(es) fÃ­sico(s) registado(s). CÃ³digos de "
+                    + copies.get(0).getCode() + " a " + copies.get(copies.size() - 1).getCode() + ".");
         } catch (IllegalArgumentException | IllegalStateException exception) {
             redirect.addFlashAttribute("error", exception.getMessage());
         }
